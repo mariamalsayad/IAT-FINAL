@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kickshot-Board Game
+</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    :root{
+    --pitch-dark:   #0F3D2E;
+    --pitch-light:  #1B5E42;
+    --gold:         #D4AF37;
+    --chalk:        #F7F5F0;
+    --ink:          #14231C;
+    --line:         rgba(247,245,240,0.18);
+    --card:         #FFFFFF;
+    --shadow:       0 10px 30px rgba(15,61,46,0.12);
+  }
+ 
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--chalk);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+  }
+ 
+  h1,h2,h3{
+    font-family:'Bebas Neue', sans-serif;
+    letter-spacing:0.02em;
+    margin:0;
+  }
+ 
+  .mono{
+    font-family:'Space Mono', monospace;
+  }
+ 
+  a{color:inherit;}
+ 
+  /* ---------- Match clock eyebrow ---------- */
+  .clock{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'Space Mono', monospace;
+    font-size:0.8rem;
+    font-weight:700;
+    color:var(--pitch-dark);
+    background:rgba(212,175,55,0.15);
+    border:1px solid rgba(212,175,55,0.5);
+    padding:4px 12px;
+    border-radius:999px;
+    margin-bottom:18px;
+  }
+  .clock::before{
+    content:"";
+    width:7px;height:7px;border-radius:50%;
+    background:var(--gold);
+  }
+ 
+  section{
+    max-width:960px;
+    margin:0 auto;
+    padding:90px 24px;
+    border-bottom:1px dashed rgba(15,61,46,0.15);
+  }
+  section:last-of-type{border-bottom:none;}
+ 
+  .section-title{
+    font-size:clamp(2rem, 4vw, 2.8rem);
+    color:var(--pitch-dark);
+    margin-bottom:20px;
+  }
+ 
+  /* ---------- Placeholder blocks ---------- */
+  .placeholder{
+    border:2px dashed rgba(15,61,46,0.35);
+    background:
+      repeating-linear-gradient(135deg, rgba(15,61,46,0.04) 0 10px, rgba(15,61,46,0.01) 10px 20px);
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:var(--pitch-dark);
+    font-family:'Space Mono', monospace;
+    font-size:0.85rem;
+    padding:20px;
+  }
+  .placeholder .tag{
+    background:var(--gold);
+    color:var(--ink);
+    padding:2px 8px;
+    border-radius:5px;
+    font-size:0.7rem;
+    margin-bottom:8px;
+    display:inline-block;
+    font-weight:700;
+  }
+ 
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    background:var(--pitch-dark);
+    padding:0;
+    border-bottom:none;
+    overflow:hidden;
+  }
+  .hero-banner{
+    height:60vh;
+    min-height:380px;
+    margin:32px;
+    border-radius:18px;
+  }
+  .hero-content{
+    max-width:960px;
+    margin:0 auto;
+    padding:0 24px 80px;
+    text-align:center;
+    color:var(--chalk);
+  }
+  .hero .clock{
+    background:rgba(212,175,55,0.18);
+    color:var(--gold);
+    border-color:rgba(212,175,55,0.5);
+  }
+  .game-title{
+    font-size:clamp(3rem, 9vw, 6.5rem);
+    color:var(--chalk);
+    line-height:0.95;
+    margin-bottom:22px;
+    text-shadow:0 4px 24px rgba(0,0,0,0.25);
+  }
+  .core-statement{
+    font-size:clamp(1.1rem, 2.2vw, 1.5rem);
+    max-width:640px;
+    margin:0 auto;
+    color:rgba(247,245,240,0.9);
+    font-weight:500;
+  }
+  .pitch-lines{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:0.08;
+    background-image:
+      linear-gradient(rgba(247,245,240,0.6) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(247,245,240,0.6) 1px, transparent 1px);
+    background-size:60px 60px;
+  }
+ 
+  /* ---------- Video ---------- */
+  .video-wrap{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .video-wrap iframe{
+    width:100%;height:100%;border:0;
+  }
+ 
+  /* ---------- Pillars ---------- */
+  .pillars{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px;
+    margin-top:8px;
+  }
+  .pillar-card{
+    background:var(--card);
+    border-radius:14px;
+    padding:28px 22px;
+    box-shadow:var(--shadow);
+    border-top:4px solid var(--gold);
+  }
+  .pillar-label{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:1.4rem;
+    color:var(--pitch-dark);
+    margin-bottom:10px;
+  }
+  .pillar-card p{margin:0;color:#3a463f;font-size:0.95rem;}
+ 
+  /* ---------- Gallery ---------- */
+  .gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
+    gap:16px;
+  }
+  .gallery .placeholder{aspect-ratio:1/1;}
+ 
+  /* ---------- Document / download rows ---------- */
+  .doc-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    background:var(--card);
+    border-radius:14px;
+    padding:22px 26px;
+    box-shadow:var(--shadow);
+    flex-wrap:wrap;
+  }
+  .doc-row .doc-text p{margin:6px 0 0; color:#3a463f; font-size:0.92rem;}
+  .doc-row .doc-text h3{font-family:'Inter',sans-serif; font-weight:700; font-size:1.05rem; letter-spacing:0;}
+  .download-btn{
+    background:var(--pitch-dark);
+    color:var(--chalk);
+    border:none;
+    padding:12px 22px;
+    border-radius:999px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:0.9rem;
+    text-decoration:none;
+    white-space:nowrap;
+    transition:background 0.2s ease;
+  }
+  .download-btn:hover{background:var(--pitch-light);}
+ 
+  /* ---------- Halftime divider ---------- */
+  .halftime{
+    max-width:960px;
+    margin:0 auto;
+    padding:50px 24px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    border-bottom:1px dashed rgba(15,61,46,0.15);
+  }
+  .halftime::before, .halftime::after{
+    content:"";
+    flex:1;
+    height:2px;
+    background:repeating-linear-gradient(90deg, var(--pitch-dark) 0 10px, transparent 10px 18px);
+  }
+  .halftime span{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:1.6rem;
+    color:var(--pitch-dark);
+    letter-spacing:0.08em;
+  }
+ 
+  /* ---------- Table (contributions) ---------- */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--card);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  th, td{
+    text-align:left;
+    padding:14px 18px;
+    font-size:0.9rem;
+    border-bottom:1px solid rgba(15,61,46,0.08);
+  }
+  th{
+    background:var(--pitch-dark);
+    color:var(--chalk);
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size:0.78rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  tr:last-child td{border-bottom:none;}
+ 
+  /* ---------- Footer ---------- */
+  footer{
+    background:var(--pitch-dark);
+    color:rgba(247,245,240,0.75);
+    text-align:center;
+    padding:50px 24px 40px;
+    font-size:0.85rem;
+  }
+  footer .whistle{
+    font-family:'Bebas Neue', sans-serif;
+    color:var(--gold);
+    font-size:1.3rem;
+    display:block;
+    margin-bottom:10px;
+    letter-spacing:0.05em;
+  }
+  footer p{max-width:600px; margin:0 auto; color:rgba(247,245,240,0.55); font-size:0.8rem;}
+ 
+  p.body-copy{color:#3a463f; max-width:720px;}
+ 
+  @media (max-width:720px){
+    .pillars{grid-template-columns:1fr;}
+    .hero-banner{margin:18px;height:42vh;}
+    .doc-row{flex-direction:column; align-items:flex-start;}
+  }
+ 
+  /* ---------- How to Play / Core Mechanics ---------- */
+.rules-list{
+  list-style:none;
+  counter-reset:rule;
+  padding:0;
+  margin:0 0 28px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.rules-list li{
+  counter-increment:rule;
+  position:relative;
+  padding:14px 18px 14px 54px;
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  color:#3a463f;
+  font-size:0.95rem;
+}
+.rules-list li::before{
+  content:counter(rule);
+  position:absolute;
+  left:14px;
+  top:14px;
+  width:26px;height:26px;
+  border-radius:50%;
+  background:var(--pitch-dark);
+  color:var(--chalk);
+  font-family:'Space Mono', monospace;
+  font-weight:700;
+  font-size:0.8rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.sub-rules{
+  margin:10px 0 0;
+  padding-left:20px;
+  color:#3a463f;
+  font-size:0.9rem;
+}
+.sub-rules li{
+  list-style:disc;
+  margin-bottom:6px;
+}
+ 
+.card-legend{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:16px;
+  margin:0 0 28px;
+}
+.card-chip{
+  background:var(--card);
+  border-radius:12px;
+  padding:18px 20px;
+  box-shadow:var(--shadow);
+  border-left:6px solid var(--pitch-dark);
+}
+.card-chip p{margin:0; color:#3a463f; font-size:0.9rem;}
+.card-chip ul{margin:8px 0 0; padding-left:18px; color:#3a463f; font-size:0.88rem;}
+.card-chip ul li{margin-bottom:6px;}
+.chip-label{
+  font-family:'Space Mono', monospace;
+  font-weight:700;
+  font-size:0.8rem;
+  text-transform:uppercase;
+  letter-spacing:0.03em;
+  color:var(--ink);
+  display:block;
+  margin-bottom:8px;
+}
+ 
+.chip-yellow{ border-left-color:#E8C547; }
+.chip-red{ border-left-color:#C1443C; }
+.chip-purple{ border-left-color:#7B5EA7; }
+.chip-green{ border-left-color:#3F8F5E; }
+.chip-gold{ border-left-color:var(--gold); }
+.chip-grey{ border-left-color:#8A8F89; }
+ 
+@media (max-width:720px){
+  .rules-list li{padding:14px 16px 14px 48px;}
+}
+ 
+  /* ---------- Rule Book ---------- */
+  .rb-callout{
+    display:inline-block;
+    background:rgba(212,175,55,0.12);
+    border:1px solid rgba(212,175,55,0.45);
+    border-radius:999px;
+    padding:6px 16px;
+    font-family:'Space Mono', monospace;
+    font-size:0.8rem;
+    font-weight:700;
+    letter-spacing:0.04em;
+    color:var(--pitch-dark);
+    margin-bottom:8px;
+  }
+  .rb-subhead{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:1.6rem;
+    color:var(--pitch-dark);
+    margin:36px 0 16px;
+  }
+  .rb-sections{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .rb-section{
+    background:var(--card);
+    border-radius:14px;
+    padding:24px 28px;
+    box-shadow:var(--shadow);
+    border-left:4px solid var(--gold);
+  }
+  .rb-section h3{
+    font-family:'Inter', sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    color:var(--pitch-dark);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .rb-num{
+    background:var(--pitch-dark);
+    color:var(--chalk);
+    font-family:'Space Mono', monospace;
+    font-size:0.8rem;
+    font-weight:700;
+    width:28px;height:28px;
+    min-width:28px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .rb-section p{margin:0 0 10px; color:#3a463f; font-size:0.93rem;}
+  .rb-section p:last-child{margin-bottom:0;}
+  .rb-section h4{
+    font-family:'Inter', sans-serif;
+    font-weight:700;
+    font-size:0.85rem;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    color:var(--ink);
+    margin:16px 0 6px;
+  }
+  .rb-section ul, .rb-section ol.rb-sub{
+    margin:0 0 12px;
+    padding-left:20px;
+    color:#3a463f;
+    font-size:0.92rem;
+  }
+  .rb-section ul li, .rb-section ol.rb-sub li{margin-bottom:6px;}
+  .rb-section ul:last-child, .rb-section ol.rb-sub:last-child{margin-bottom:0;}
+  .rb-trophy{
+    background:rgba(212,175,55,0.1);
+    border:1px dashed rgba(212,175,55,0.6);
+    border-radius:12px;
+    padding:16px 20px;
+    font-size:0.93rem;
+    color:var(--pitch-dark);
+    font-weight:600;
+  }
+
+  /* ---------- Flowchart diagram ---------- */
+.flowchart-card{
+  background:var(--card);
+  border-radius:14px;
+  padding:24px;
+  box-shadow:var(--shadow);
+  margin-bottom:20px;
+  overflow-x:auto;
+}
+.flowchart-card svg{
+  width:100%;
+  height:auto;
+  min-width:640px;
+  display:block;
+}
+
+.placeholder {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;      /* keeps a consistent card-like shape; adjust as needed */
+  overflow: hidden;         /* clips anything that doesn't fit */
+  border-radius: 8px;       /* optional, match your existing style */
+  padding:9px;
+}
+
+.placeholder img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border-radius:10px;
+}
+
+.placeholder:has(img){
+  background:var(--chalk);
+  border:none;
+}
+
+/* ---------- Backstory image ---------- */
+.backstory-image{
+  width:100%;
+  aspect-ratio:16/9;
+  margin-top:24px;
+}
+
+.gallery-item{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+    margin:0;   
+}
+.gallery-item .placeholder{
+  margin:0;
+}
+
+.gallery-caption{
+  margin:0;
+  text-align:center;
+  font-family:'Space Mono', monospace;
+  font-size:0.8rem;
+  font-weight:700;
+  letter-spacing:0.02em;
+  color:var(--pitch-dark);
+}
+
+.video-wrapper {
+  width: 100%;
+  max-width: 800px;
+}
+.video-wrapper video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+</style>
+</head>
+<body>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="pitch-lines"></div>
+    <div class="placeholder hero-banner" style="margin-top:32px;">
+      <div>
+        <span class="tag">KICK-OFF</span><br>
+        [BANNER IMAGE — full photo of your game board, laid out and ready to play]
+      </div>
+    </div>
+    <div class="hero-content">
+      <div class="clock">KICK-OFF · 0'</div>
+      <h1 class="game-title">Kick Rush</h1>
+      <p class="core-statement">The World Cup Experience on Your Table.
+</p>
+    </div>
+  </header>
+  
+  <!-- ============ TRAILER ============ -->
+<section id="trailer">
+  <div class="clock">5' · KICK-OFF WHISTLE</div>
+  <h2 class="section-title">The Trailer</h2>
+  <div class="video-wrapper">
+    <video controls poster="trailer-poster.jpg">
+      <source src="trailer.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</section>
+
+  <!-- ============ INSPIRATION ============ -->
+  <section id="inspiration">
+    <div class="clock">12' · BUILDING PLAY</div>
+    <h2 class="section-title">Where It Comes From</h2>
+    <p class="body-copy">Our World Cup board game was inspired by several popular games. We borrowed the dice-based movement from Monopoly, where the number rolled determines how far a player can move. The action card system was inspired by games like UNO and Mario Party, where special cards or events can change the course of the game and add unpredictability. We also took inspiration from the teamwork and passing mechanics found in the video game EA Sports FC 25 (formerly FIFA), incorporating realistic soccer rules such as yellow cards, red cards, free kicks, injuries, and shooting opportunities. By combining these mechanics with our own board game design, we created a game that captures the excitement and strategy of a World Cup soccer match while remaining fun and accessible for players of all ages.
+</p>
+  </section>
+
+  <!-- ============ PILLARS ============ -->
+  <section id="pillars">
+    <div class="clock">20' · THE GAME PLAN</div>
+    <h2 class="section-title">Three Pillars</h2>
+    <div class="pillars">
+      <div class="pillar-card">
+        <div class="pillar-label">What</div>
+        <p> A competitive mini soccer board game where teams use movement, shooting, and strategy cards to score goals.
+</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-label">How</div>
+        <p>Players roll dice to move, shoot when in scoring zones, and use cards to create advantages and outplay opponents.
+</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-label">Why</div>
+        <p>The game delivers a fun mix of strategy, teamwork, and soccer skill where every turn creates new tactical decisions.
+</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BACKSTORY ============ -->
+  <section id="backstory">
+    <div class="clock">28' · THE STORYWORLD</div>
+    <h2 class="section-title">Thematic Backstory</h2>
+    <p class="body-copy">
+
+Every 100 years, the KickShot Cup is held to decide who will protect the legendary Golden Ball, a powerful artifact said to bring peace and prosperity to the kingdom. Teams from across the world travel to the Grand Arena, each hoping to earn the honor of becoming its guardian.
+
+On the day of the final match, a mysterious challenger appears and claims the Golden Ball belongs to them. Instead of starting a war, the leaders agree that the fate of the artifact will be decided the traditional way—through one final KickShot match.
+
+Now the two teams step onto the field with the future of the kingdom in their hands. Only one team will lift the KickShot Cup, claim the Golden Ball, and become the kingdom's next champions.
+</p>
+<div class="placeholder backstory-image">
+   <img src="backstory.png">
+
+</div>
+  </section>
+
+  <!-- ============ GALLERY ============ -->
+<section id="gallery">
+  <div class="clock">36' · MATCH KIT</div>
+  <h2 class="section-title">Component Gallery</h2>
+  <p class="body-copy">Everything in the box besides the board itself — cards, dice, player pieces, tokens.</p>
+  <div class="gallery">
+  <figure class="gallery-item">
+    <div class="placeholder"><img src="4corner.png" alt="Card front"></div>
+    <figcaption class="gallery-caption">4 Corner Setup</figcaption>
+  </figure>
+  <figure class="gallery-item">
+    <div class="placeholder"><img src="back.png" alt="Card back"></div>
+    <figcaption class="gallery-caption">Card back</figcaption>
+  </figure>
+  <figure class="gallery-item">
+    <div class="placeholder"><img src="green.png" alt="Dice"></div>
+    <figcaption class="gallery-caption">Green Card</figcaption>
+  </figure>
+  <figure class="gallery-item">
+    <div class="placeholder"><img src="yellow.png" alt="Player piece 1"></div>
+    <figcaption class="gallery-caption">Yellow Card</figcaption>
+  </figure>
+  <figure class="gallery-item">
+    <div class="placeholder"><img src="purple.png" alt="Player piece 2"></div>
+    <figcaption class="gallery-caption">Purple Card</figcaption>
+  </figure>
+  <figure class="gallery-item">
+    <div class="placeholder"><img src="gold.png" alt="Tokens / markers"></div>
+    <figcaption class="gallery-caption">Gold Card</figcaption>
+  </figure>
+  <figure class="gallery-item">
+    <div class="placeholder"><img src="red.png" alt="Tokens / markers"></div>
+    <figcaption class="gallery-caption"> Red Card</figcaption>
+  </figure>
+    <figure class="gallery-item">
+    <div class="placeholder"><img src="die.png" alt="Tokens / markers"></div>
+    <figcaption class="gallery-caption"> Dice</figcaption>
+  </figure>
+</div>
+</section>
+
+  <!-- ============ RULE BOOK ============ -->
+  <section id="rulebook">
+    <div class="clock">45' · FULL RULES</div>
+    <h2 class="section-title">The Rule Book</h2>
+    <p class="body-copy">Every team has a set of 10 cards that they get to look at, and chooses whichever card to play on their turn. This is the complete, official rule book.</p>
+    <span class="rb-callout">BOARD · 10 × 5 GRID</span>
+ 
+    <h3 class="rb-subhead">The Cards</h3>
+    <div class="card-legend">
+      <div class="card-chip chip-yellow">
+        <span class="chip-label">Yellow Card — Play Immediately</span>
+        <ul>
+          <li>Drawer sits out for one turn.</li>
+          <li>Prevents one opponent from using any card on their next turn.</li>
+        </ul>
+      </div>
+      <div class="card-chip chip-green">
+        <span class="chip-label">Green Card</span>
+        <ul>
+          <li>Shoot the ball at the net.</li>
+          <li>Pass the ball to a teammate — if they're in the Shooting Zone, they may shoot it.</li>
+        </ul>
+      </div>
+      <div class="card-chip chip-purple">
+        <span class="chip-label">Purple Card</span>
+        <ul>
+          <li>Swap positions with your teammate.</li>
+          <li>If you're adjacent to the player with the ball, steal possession immediately.</li>
+        </ul>
+      </div>
+      <div class="card-chip chip-red">
+        <span class="chip-label">Red Card</span>
+        <p>The whole team sits out for one turn.</p>
+      </div>
+      <div class="card-chip chip-gold">
+        <span class="chip-label">Gold Card</span>
+        <p>You have the chance to defend your net when the opponent shoots.</p>
+      </div>
+    </div>
+ 
+    <h3 class="rb-subhead">Official Rules</h3>
+    <div class="rb-sections">
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">1</span>Game Overview</h3>
+        <p>Mini Soccer is a strategy-based board game that combines movement, shooting, and special card abilities. Teams compete to score the most goals by moving strategically across the board, using cards, and taking successful shots.</p>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">2</span>Players &amp; Teams</h3>
+        <p>Each team consists of <strong>2 players</strong>. The game can be played with:</p>
+        <ul>
+          <li><strong>2 teams</strong> (1 vs 1)</li>
+          <li><strong>4 teams</strong> (free-for-all competition)</li>
+        </ul>
+        <p>Each team controls:</p>
+        <ul>
+          <li>1 soccer ball</li>
+          <li>2 player pieces</li>
+          <li>10 action cards</li>
+        </ul>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">3</span>Board Setup</h3>
+        <p>Before starting the game:</p>
+        <h4>2-Team Game</h4>
+        <ul>
+          <li>Place 2 goals on opposite sides of the board.</li>
+          <li>Each team defends one goal and attacks the opponent's goal.</li>
+        </ul>
+        <h4>4-Team Game</h4>
+        <ul>
+          <li>Place 4 goals, one in each corner of the board.</li>
+          <li>Each team is assigned a goal to defend.</li>
+        </ul>
+        <h4>Starting Setup</h4>
+        <ul>
+          <li>Place all player pieces in their starting positions.</li>
+          <li>Shuffle each team's 10 cards.</li>
+          <li>Place the cards face down in each team's card area.</li>
+          <li>Place the soccer ball according to the starting position.</li>
+          <li>Determine the starting team using a coin toss.</li>
+        </ul>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">4</span>Starting the Game</h3>
+        <ul>
+          <li>A coin toss determines which team starts with possession of the ball.</li>
+          <li>The starting team begins the first turn.</li>
+          <li>Turns continue clockwise around the board.</li>
+        </ul>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">5</span>Turn Sequence</h3>
+        <p>During each team's turn:</p>
+        <h4>Step 1 — Choose Active Player</h4>
+        <ul>
+          <li>One player from the active team becomes the <strong>Attacker</strong>.</li>
+          <li>The other teammate remains on the board as a <strong>Defender / Support Player</strong> and may help with future plays.</li>
+        </ul>
+        <h4>Step 2 — Roll and Move</h4>
+        <ul>
+          <li>The Attacker rolls the die.</li>
+          <li>Move the player piece the exact number of spaces shown on the die.</li>
+        </ul>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">6</span>Shooting Rules</h3>
+        <p>After moving, check the player's location. If the player lands in a <strong>Shooting Zone</strong>:</p>
+        <ul>
+          <li>The player becomes the attacker; the opposing team's player acts as the defender.</li>
+          <li>The attacker may attempt a shot by flicking the mini soccer ball toward the goal.</li>
+          <li>If the ball enters the goal, the attacking team earns <strong>1 point</strong>.</li>
+          <li>If the shot misses, no points are awarded.</li>
+        </ul>
+        <p>After the shot, the ball is given to the opposing team and the next team begins their turn.</p>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">7</span>Card Rules</h3>
+        <p>If the player does <strong>not</strong> land in a Shooting Zone, they must use one card from their team's 10-card deck.</p>
+        <ul>
+          <li>A player may only use one card per turn.</li>
+          <li>The card effect must be completed immediately.</li>
+          <li>Used cards are placed in a discard pile and cannot be reused.</li>
+        </ul>
+        <p>Possible card effects may include: moving player pieces, blocking opponents, stealing possession, changing movement options, or creating attacking opportunities.</p>
+        <p>After the card effect, possession passes to the next team.</p>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">8</span>Team Roles During Play</h3>
+        <p>Each turn has two roles:</p>
+        <h4>Attacker</h4>
+        <ul>
+          <li>Rolls the die and moves.</li>
+          <li>Attempts shots when entering a Shooting Zone.</li>
+          <li>Uses cards when not in a Shooting Zone.</li>
+        </ul>
+        <h4>Defender / Support Player</h4>
+        <ul>
+          <li>The teammate who does not move during the current turn.</li>
+          <li>Remains on the board.</li>
+          <li>Helps defend against opponents and prepares for future turns.</li>
+        </ul>
+        <p>Players may switch roles between turns.</p>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">9</span>Possession Rules</h3>
+        <ul>
+          <li>After every shot attempt (goal or miss), possession goes to the opposing team.</li>
+          <li>After every completed card action, possession goes to the next team.</li>
+          <li>A team cannot take another turn until all other teams have completed their turns.</li>
+        </ul>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">10</span>End of Game</h3>
+        <p>The game continues clockwise until every team has used all 10 of their cards. Once all cards have been used:</p>
+        <ul>
+          <li>Count each team's total goals.</li>
+          <li>Each successful goal is worth 1 point.</li>
+          <li>The team with the highest score wins.</li>
+        </ul>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">11</span>Tie-Breaker — Penalty Kicks</h3>
+        <p>If two or more teams have the same score:</p>
+        <ul>
+          <li>Each tied team takes one final penalty shot.</li>
+          <li>Teams take turns attempting shots.</li>
+          <li>The first team to score while the others miss is declared the winner.</li>
+        </ul>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">12</span>Winning the Game</h3>
+        <div class="rb-trophy">
+          🏆 The winner is the team with the most goals after all cards are used, or the first team to score during sudden-death penalty kicks.
+        </div>
+      </div>
+ 
+    </div>
+  </section>
+
+
+  <!-- ============ HALFTIME DIVIDER ============ -->
+  <div class="halftime"><span>HALF-TIME</span></div>
+
+  <!-- ============ MEETING LOG ============ -->
+  <section id="meetings">
+    <div class="clock">50' · SECOND HALF</div>
+    <h2 class="section-title">Group Meeting Log</h2>
+    <div class="doc-row">
+      <div class="doc-text">
+        <h3>Meeting Minutes &amp; Summaries</h3>
+        <p>[First page of each meeting's minutes, compiled into one PDF.]</p>
+      </div>
+      <a class="download-btn" href="#">[Link your Meeting Log PDF]</a>
+    </div>
+  </section>
+
+  <!-- ============ PLAYTESTING LOG ============ -->
+  <section id="playtesting">
+    <div class="clock">58' · ON THE PITCH</div>
+    <h2 class="section-title">Playtesting Log</h2>
+    <div class="doc-row">
+      <div class="doc-text">
+        <h3>What We Learned</h3>
+        <p>[What you learned during playtesting and how you revised the game based on those insights.]</p>
+      </div>
+      <a class="download-btn" href="#">[Link your Playtesting Log PDF]</a>
+    </div>
+  </section>
+
+  <!-- ============ FLOWCHARTS ============ -->
+  <div class="flowchart-card">
+  <svg viewBox="0 0 1000 1260" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#0F3D2E"/>
+      </marker>
+    </defs>
+
+    <g fill="none" stroke="#0F3D2E" stroke-width="2" marker-end="url(#arrow2)">
+      <path d="M500,46 L500,70"/>
+      <path d="M500,114 L500,140"/>
+      <path d="M500,184 L500,210"/>
+      <path d="M500,254 L500,280"/>
+      <path d="M500,344 L500,374"/>
+
+      <path d="M300,401 L250,401 L250,460"/>
+      <path d="M700,401 L750,401 L750,460"/>
+
+      <path d="M250,520 L250,550"/>
+      <path d="M750,520 L750,550"/>
+
+      <path d="M130,582 L145,582 L145,630"/>
+      <path d="M370,582 L315,582 L315,630"/>
+      <path d="M750,594 L750,620"/>
+
+      <path d="M145,680 L420,710"/>
+      <path d="M315,680 L460,710"/>
+      <path d="M750,664 L580,710"/>
+
+      <path d="M500,754 L500,780"/>
+      <path d="M500,824 L500,850"/>
+
+      <path d="M300,882 L350,882 L350,940"/>
+      <path d="M700,882 L650,882 L650,940"/>
+
+      <path d="M770,967 L900,967 L900,167 L700,167"/>
+
+      <path d="M350,984 L350,1010"/>
+      <path d="M230,1042 L250,1042 L250,1100"/>
+      <path d="M470,1042 L490,1042 L490,1100"/>
+
+      <path d="M250,1160 L500,1200"/>
+      <path d="M490,1160 L500,1200"/>
+    </g>
+
+    <g font-family="'Space Mono', monospace" font-size="12" font-weight="700" fill="#0F3D2E">
+      <text x="275" y="394" text-anchor="middle">YES</text>
+      <text x="725" y="394" text-anchor="middle">NO</text>
+      <text x="140" y="575" text-anchor="middle">YES</text>
+      <text x="355" y="575" text-anchor="middle">NO</text>
+      <text x="325" y="875" text-anchor="middle">YES</text>
+      <text x="675" y="875" text-anchor="middle">NO</text>
+      <text x="235" y="1035" text-anchor="middle">YES</text>
+      <text x="475" y="1035" text-anchor="middle">NO</text>
+      <text x="900" y="500" text-anchor="middle" transform="rotate(90 900,500)">CONTINUE GAME · NEXT TURN</text>
+    </g>
+
+    <rect x="440" y="10" width="120" height="36" rx="18" fill="#D4AF37"/>
+    <text x="500" y="33" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="16" letter-spacing="0.05em" fill="#14231C">START</text>
+
+    <g font-family="Inter, sans-serif" font-size="13" fill="#14231C">
+      <rect x="300" y="70" width="400" height="44" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+      <text x="500" y="97" text-anchor="middle">Coin toss decides first team</text>
+
+      <rect x="300" y="140" width="400" height="44" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+      <text x="500" y="167" text-anchor="middle">Player with ball rolls die to move</text>
+
+      <rect x="300" y="210" width="400" height="44" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+      <text x="500" y="237" text-anchor="middle">Move player on the board</text>
+    </g>
+
+    <rect x="270" y="280" width="460" height="64" rx="12" fill="#FFFFFF" stroke="#D4AF37" stroke-width="2.5"/>
+    <text x="500" y="306" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="#14231C">Moving player becomes ATTACKER</text>
+    <text x="500" y="326" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="#14231C">Opposing player becomes DEFENDER</text>
+
+    <rect x="300" y="374" width="400" height="54" rx="12" fill="#0F3D2E"/>
+    <text x="500" y="406" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#F7F5F0">Is player in Shooting Zone?</text>
+
+    <rect x="130" y="460" width="240" height="60" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+    <text x="250" y="485" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#14231C">Attempt a shot</text>
+    <text x="250" y="503" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#3a463f">(Attacker vs Defender)</text>
+
+    <rect x="630" y="460" width="240" height="60" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+    <text x="750" y="485" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#14231C">Use one of team's</text>
+    <text x="750" y="503" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#14231C">10 cards</text>
+
+    <rect x="130" y="550" width="240" height="54" rx="12" fill="#0F3D2E"/>
+    <text x="250" y="582" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" font-weight="600" fill="#F7F5F0">Did the shot score?</text>
+
+    <rect x="630" y="550" width="240" height="44" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+    <text x="750" y="577" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#14231C">Apply card effect</text>
+
+    <rect x="70" y="630" width="150" height="50" rx="10" fill="#FFFFFF" stroke="#D4AF37" stroke-width="2.5"/>
+    <text x="145" y="660" text-anchor="middle" font-family="'Space Mono', monospace" font-size="12" font-weight="700" fill="#14231C">+1 Goal</text>
+
+    <rect x="240" y="630" width="150" height="50" rx="10" fill="#FFFFFF" stroke="#8A8F89" stroke-width="2.5"/>
+    <text x="315" y="660" text-anchor="middle" font-family="'Space Mono', monospace" font-size="12" font-weight="700" fill="#14231C">No Goal</text>
+
+    <rect x="630" y="620" width="240" height="44" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+    <text x="750" y="647" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#14231C">Card action completed</text>
+
+    <rect x="340" y="710" width="320" height="44" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+    <text x="500" y="737" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#14231C">Give ball to opposing team</text>
+
+    <rect x="300" y="780" width="400" height="44" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+    <text x="500" y="807" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#14231C">Switch to next team's turn</text>
+
+    <rect x="300" y="850" width="400" height="54" rx="12" fill="#0F3D2E"/>
+    <text x="500" y="882" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#F7F5F0">Has Round 10 finished?</text>
+
+    <rect x="230" y="940" width="240" height="44" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+    <text x="350" y="967" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#14231C">Count total goals</text>
+
+    <rect x="530" y="940" width="240" height="44" rx="10" fill="#FFFFFF" stroke="#0F3D2E" stroke-width="1.5"/>
+    <text x="650" y="967" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#14231C">Continue game</text>
+
+    <rect x="230" y="1010" width="240" height="54" rx="12" fill="#0F3D2E"/>
+    <text x="350" y="1042" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#F7F5F0">Is there a tie?</text>
+
+    <rect x="140" y="1100" width="220" height="60" rx="10" fill="#FFFFFF" stroke="#D4AF37" stroke-width="2.5"/>
+    <text x="250" y="1125" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#14231C">Penalty kicks</text>
+    <text x="250" y="1143" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#14231C">between teams</text>
+
+    <rect x="390" y="1100" width="200" height="60" rx="10" fill="#FFFFFF" stroke="#D4AF37" stroke-width="2.5"/>
+    <text x="490" y="1125" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#14231C">Winner</text>
+    <text x="490" y="1143" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#14231C">announced</text>
+
+    <rect x="440" y="1200" width="120" height="40" rx="20" fill="#D4AF37"/>
+    <text x="500" y="1225" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="16" letter-spacing="0.05em" fill="#14231C">END</text>
+  </svg>
+</div>
+
+  <!-- ============ QUANT ANALYSIS ============ -->
+  <section id="balance">
+    <div class="clock">72' · THE STAT SHEET</div>
+    <h2 class="section-title">Quantitative Analysis of Game Balance</h2>
+    <p class="body-copy">[Discuss probabilities and design factors used to balance the game — adjustments made during playtesting, average play length, average turn length, score ranges, card/dice probabilities, etc.]</p>
+    <div class="doc-row">
+      <div class="doc-text">
+        <h3>Balance Data &amp; Charts</h3>
+        <p>[Attach your full quantitative breakdown here, or link a PDF.]</p>
+      </div>
+      <a class="download-btn" href="#">[Link your Balance Analysis PDF]</a>
+    </div>
+  </section>
+
+  <!-- ============ DYNAMICS ============ -->
+  <section id="dynamics">
+    <div class="clock">78' · READING THE GAME</div>
+    <h2 class="section-title">Game Dynamics</h2>
+    <p class="body-copy">[Describe the successful strategies that emerged from play — how experienced players actually approach the game.]</p>
+  </section>
+
+  <!-- ============ TRADE-OFFS ============ -->
+  <section id="tradeoffs">
+    <div class="clock">82' · TOUGH CALLS</div>
+    <h2 class="section-title">Trade-offs &amp; Dilemmas</h2>
+    <p class="body-copy">[Describe the trade-offs and dilemmas that emerge in gameplay — the interesting decisions players are forced to make.]</p>
+  </section>
+
+  <!-- ============ SESSION LENGTH ============ -->
+  <section id="session-length">
+    <div class="clock">86' · STOPPAGE TIME</div>
+    <h2 class="section-title">Typical Play Session</h2>
+    <p class="body-copy">[Describe how long a typical play session lasts, start to finish.]</p>
+  </section>
+
+  <!-- ============ TEAM CONTRIBUTIONS ============ -->
+  <section id="contributions">
+    <div class="clock">90' · FULL TIME</div>
+    <h2 class="section-title">Team Contributions</h2>
+    <p class="body-copy">Exactly what each team member contributed, beyond general ideas or conversation.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Team Member</th>
+          <th>Deliverable(s)</th>
+          <th>Approx. %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>[Name]</td><td>[e.g. Rule book, card art]</td><td>[XX%]</td></tr>
+        <tr><td>[Name]</td><td>[e.g. Playtesting log, balance analysis]</td><td>[XX%]</td></tr>
+        <tr><td>[Name]</td><td>[e.g. Website, trailer video]</td><td>[XX%]</td></tr>
+        <tr><td>[Name]</td><td>[e.g. Flowcharts, meeting minutes]</td><td>[XX%]</td></tr>
+      </tbody>
+    </table>
+    <div class="doc-row" style="margin-top:16px;">
+      <div class="doc-text">
+        <h3>Full Contribution Record</h3>
+        <p>[Optional: link a detailed PDF breakdown if the table above isn't enough.]</p>
+      </div>
+      <a class="download-btn" href="#">[Link your Contributions PDF]</a>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <span class="whistle">FINAL WHISTLE</span>
+    <p>[Game Title] is an original concept created by our team for this course. All characters, storyworld, and mechanics are our own work.</p>
+  </footer>
+
+</body>
+</html>

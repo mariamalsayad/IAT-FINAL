@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KICKSHOT — Trailer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,700&family=Space+Mono:wght@400;700&display=swap');
+
+:root{
+  --pitch-black:#0A1810;
+  --field:#0F2C1C;
+  --field-line:rgba(243,239,228,0.22);
+  --chalk:#F3EFE4;
+  --net:#C9D4CC;
+  --yellow:#F2C230;
+  --red:#D6473F;
+  --purple:#9B6FD1;
+  --green:#3FAE64;
+  --gold:#D9A94E;
+  --glow:#FFD65C;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Barlow Condensed',sans-serif;}
+
+#stage{
+  position:relative;width:100%;height:100vh;min-height:420px;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(63,174,100,0.10), transparent 60%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 40px),
+    var(--pitch-black);
+  overflow:hidden;
+}
+
+/* Cinematic letterbox */
+.letterbox{position:absolute;left:0;right:0;height:6.5vh;background:#000;z-index:50;pointer-events:none;}
+.letterbox.top{top:0;} .letterbox.bottom{bottom:0;}
+
+/* Broadcast scoreboard */
+#scoreboard{
+  position:absolute; top:9vh; left:2.2vw; z-index:40;
+  font-family:'Space Mono',monospace; font-weight:700;
+  background:rgba(10,24,16,0.72); border:1px solid rgba(243,239,228,0.35);
+  color:var(--chalk); padding:6px 12px; font-size:clamp(11px,1.3vw,15px);
+  letter-spacing:1px; border-radius:2px;
+  opacity:0; transition:opacity .5s ease;
+}
+#scoreboard.show{opacity:1;}
+#scoreboard .dot{color:var(--yellow);}
+
+/* Progress bar */
+#progressWrap{position:absolute;bottom:6.5vh;left:0;right:0;height:4px;background:rgba(255,255,255,0.12);z-index:40;}
+#progressFill{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--yellow));transition:width .1s linear;}
+
+/* Scenes */
+.scene{
+  position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition:opacity .7s ease; z-index:5;
+}
+.scene.active{opacity:1; visibility:visible; z-index:10;}
+
+/* Lower-third captions, broadcast style */
+.cap-row{position:absolute; left:0; right:0; bottom:14vh; display:flex; flex-direction:column; align-items:center; gap:6px; z-index:20; text-align:center; padding:0 4vw;}
+.cap{
+  font-family:'Barlow Condensed',sans-serif; font-weight:700; text-transform:uppercase;
+  color:var(--chalk); font-size:clamp(20px,4vw,42px); letter-spacing:1px;
+  background:linear-gradient(90deg, rgba(10,24,16,0) 0%, rgba(10,24,16,0.82) 12%, rgba(10,24,16,0.82) 88%, rgba(10,24,16,0) 100%);
+  padding:6px 22px; opacity:0; transform:translateY(14px);
+}
+.cap.sub{font-size:clamp(14px,2.1vw,22px); font-weight:600; color:var(--gold);}
+
+/* ===== SCENE 1: TITLE ===== */
+#scene1 .grid-wash{
+  position:absolute; inset:0;
+  background-image:
+    repeating-linear-gradient(0deg, var(--field-line) 0 1px, transparent 1px calc(35vmin/5)),
+    repeating-linear-gradient(90deg, var(--field-line) 0 1px, transparent 1px calc(70vmin/10));
+  width:70vmin; height:35vmin; margin:auto; position:relative;
+  opacity:0; transform:scale(1.3);
+}
+#scene1.active .grid-wash{ animation:s1grid 8s ease forwards; }
+@keyframes s1grid{ 0%{opacity:0; transform:scale(1.3);} 15%{opacity:0.5; transform:scale(1);} 90%{opacity:0.5;} 100%{opacity:0;} }
+#scene1 .logo-wrap{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;}
+#scene1 .kicklogo{
+  font-family:'Anton',sans-serif; font-size:clamp(46px,11vw,140px); color:var(--chalk);
+  letter-spacing:4px; text-shadow:0 0 40px rgba(255,214,92,0.35), 0 6px 0 rgba(0,0,0,0.5);
+  opacity:0; transform:scale(0.6);
+}
+#scene1.active .kicklogo{ animation:s1logo 8s cubic-bezier(.2,1.4,.4,1) forwards; }
+@keyframes s1logo{ 0%,15%{opacity:0; transform:scale(0.6);} 30%{opacity:1; transform:scale(1.06);} 38%{transform:scale(1);} 90%{opacity:1;} 100%{opacity:0;} }
+#scene1 .kicklogo span{color:var(--yellow);}
+#scene1 .tagline{
+  font-family:'Barlow Condensed',sans-serif; font-weight:700; letter-spacing:6px; text-transform:uppercase;
+  color:var(--net); font-size:clamp(13px,2vw,24px); opacity:0;
+}
+#scene1.active .tagline{ animation:s1tag 8s ease forwards; }
+@keyframes s1tag{ 0%,55%{opacity:0; letter-spacing:12px;} 68%{opacity:1; letter-spacing:6px;} 90%{opacity:1;} 100%{opacity:0;} }
+
+/* ===== SHARED PITCH ===== */
+.pitch-frame{position:relative; width:70vmin; height:35vmin;}
+.pitch{
+  position:relative; width:100%; height:100%;
+  display:grid; grid-template-columns:repeat(10,1fr); grid-template-rows:repeat(5,1fr);
+  background:var(--field); border:2px solid rgba(243,239,228,0.5); box-shadow:0 0 60px rgba(0,0,0,0.6) inset;
+}
+.pitch .cell{border:1px solid var(--field-line);}
+.goal{
+  position:absolute; top:15%; bottom:15%; width:2.4%;
+  background:repeating-linear-gradient(45deg, rgba(201,212,204,0.5) 0 2px, transparent 2px 6px);
+  border:2px solid var(--net);
+}
+.goal.left{left:-2.4%;} .goal.right{right:-2.4%;}
+.zone-highlight{position:absolute; top:0; bottom:0; width:10%; background:rgba(255,214,92,0.16); border-left:2px dashed var(--yellow); border-right:2px dashed var(--yellow);}
+.piece{position:absolute; width:6%; height:12%; border-radius:50%; background:var(--chalk); box-shadow:0 0 12px rgba(0,0,0,0.5);}
+.piece.b{background:var(--red);}
+.ball{position:absolute; width:3.4%; aspect-ratio:1/1; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff, #cfcfcf 55%, #8f8f8f); box-shadow:0 0 8px rgba(0,0,0,0.5);}
+
+/* ===== SCENE 2: SETUP ===== */
+#scene2 .pitch-frame{opacity:0; transform:scale(0.85);}
+#scene2.active .pitch-frame{ animation:s2in 9s ease forwards; }
+@keyframes s2in{ 0%{opacity:0;transform:scale(0.85);} 20%{opacity:1;transform:scale(1);} 95%{opacity:1;} 100%{opacity:0;} }
+#scene2 .goal{opacity:0;}
+#scene2.active .goal{ animation:s2goal 9s ease forwards; }
+@keyframes s2goal{ 0%,18%{opacity:0;} 30%{opacity:1;box-shadow:0 0 18px var(--yellow);} 45%{box-shadow:none;} 95%{opacity:1;} 100%{opacity:0;} }
+#scene2 .squadA{position:absolute; left:9%; top:22%;} 
+#scene2 .squadA.p2{left:9%; top:62%;}
+#scene2 .squadB{position:absolute; right:9%; top:22%; background:var(--red);}
+#scene2 .squadB.p2{right:9%; top:62%; background:var(--red);}
+#scene2 .piece{opacity:0; transform:translateY(-30px) scale(0.4);}
+#scene2.active .piece{ animation:s2piece 9s cubic-bezier(.3,1.6,.4,1) forwards; }
+@keyframes s2piece{ 0%,44%{opacity:0;transform:translateY(-30px) scale(0.4);} 55%{opacity:1;transform:translateY(0) scale(1.15);} 62%{transform:translateY(0) scale(1);} 95%{opacity:1;} 100%{opacity:0;} }
+#scene2 .ball{left:48.3%; top:44%; opacity:0; transform:translateY(-60px) scale(0.5);}
+#scene2.active .ball{ animation:s2ball 9s cubic-bezier(.3,1.8,.4,1) forwards; }
+@keyframes s2ball{ 0%,60%{opacity:0;transform:translateY(-60px) scale(0.5);} 72%{opacity:1;transform:translateY(6px) scale(1.1);} 78%{transform:translateY(0) scale(1);} 95%{opacity:1;} 100%{opacity:0;} }
+@keyframes cw2a{ 0%,10%{opacity:0;transform:translateY(14px);} 20%{opacity:1;transform:translateY(0);} 42%{opacity:1;} 48%{opacity:0;} 100%{opacity:0;} }
+@keyframes cw2b{ 0%,45%{opacity:0;transform:translateY(14px);} 55%{opacity:1;transform:translateY(0);} 74%{opacity:1;} 80%{opacity:0;} 100%{opacity:0;} }
+@keyframes cw2c{ 0%,76%{opacity:0;transform:translateY(14px);} 84%{opacity:1;transform:translateY(0);} 96%{opacity:1;} 100%{opacity:0;} }
+#scene2.active .cap.c1{animation:cw2a 9s ease forwards;}
+#scene2.active .cap.c2{animation:cw2b 9s ease forwards;}
+#scene2.active .cap.c3{animation:cw2c 9s ease forwards;}
+
+/* ===== SCENE 3: ROLL & MOVE ===== */
+#scene3 .die{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:12vmin; height:12vmin; z-index:3;
+}
+#scene3 .die-face{
+  position:absolute; inset:0; background:var(--chalk); border-radius:16%;
+  display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr);
+  padding:14%; box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
+#scene3 .pip{width:100%; aspect-ratio:1/1; border-radius:50%; background:var(--pitch-black); align-self:center; justify-self:center; opacity:0;}
+#scene3.active .die-roll{animation:s3roll 9s cubic-bezier(.3,.2,.2,1) forwards;}
+@keyframes s3roll{ 0%,5%{transform:rotate(0deg) scale(1); opacity:0;} 8%{opacity:1;} 30%{transform:rotate(900deg) scale(1.15);} 36%{transform:rotate(1080deg) scale(1); opacity:1;} 60%{opacity:1; transform:scale(1);} 68%{opacity:0; transform:scale(0.8);} 100%{opacity:0;} }
+/* pips for "4": corners */
+#scene3.active .p-tl,#scene3.active .p-tr,#scene3.active .p-bl,#scene3.active .p-br{animation:pipShow 9s ease forwards;}
+@keyframes pipShow{ 0%,34%{opacity:0;} 38%{opacity:1;} 65%{opacity:1;} 70%{opacity:0;} 100%{opacity:0;} }
+#scene3 .p-tl{grid-column:1; grid-row:1;} #scene3 .p-tr{grid-column:3; grid-row:1;}
+#scene3 .p-bl{grid-column:1; grid-row:3;} #scene3 .p-br{grid-column:3; grid-row:3;}
+
+#scene3 .pitch-frame{opacity:0;}
+#scene3.active .pitch-frame{ animation:s3pitchin 9s ease forwards; }
+@keyframes s3pitchin{ 0%,34%{opacity:0;} 40%{opacity:1;} 96%{opacity:1;} 100%{opacity:0;} }
+#scene3 .move-piece{left:5%; top:44%;}
+#scene3.active .move-piece{ animation:s3move 9s cubic-bezier(.5,.1,.3,1) forwards; }
+@keyframes s3move{ 0%,68%{left:5%;} 82%{left:45%;} 100%{left:45%;} }
+#scene3 .trail{position:absolute; top:47%; left:5%; height:6%; background:linear-gradient(90deg, transparent, var(--yellow)); opacity:0;}
+#scene3.active .trail{ animation:s3trail 9s ease forwards; }
+@keyframes s3trail{ 0%,70%{width:0%; opacity:0;} 82%{width:40%; opacity:0.7;} 90%{opacity:0.7;} 100%{width:40%; opacity:0;} }
+#scene3.active .cap.c1{animation:cw3a 9s ease forwards;}
+#scene3.active .cap.c2{animation:cw3b 9s ease forwards;}
+@keyframes cw3a{ 0%,4%{opacity:0;transform:translateY(14px);} 12%{opacity:1;transform:translateY(0);} 32%{opacity:1;} 38%{opacity:0;} 100%{opacity:0;} }
+@keyframes cw3b{ 0%,42%{opacity:0;transform:translateY(14px);} 50%{opacity:1;transform:translateY(0);} 88%{opacity:1;} 94%{opacity:0;} 100%{opacity:0;} }
+
+/* ===== SCENE 4: THE SHOT ===== */
+#scene4 .pitch-frame{opacity:0;}
+#scene4.active .pitch-frame{ animation:s4in 10s ease forwards; }
+@keyframes s4in{ 0%{opacity:0;} 8%{opacity:1;} 94%{opacity:1;} 100%{opacity:0;} }
+#scene4 .zone-highlight{left:78%; opacity:0;}
+#scene4.active .zone-highlight{ animation:s4zone 10s ease forwards; }
+@keyframes s4zone{ 0%,10%{opacity:0;} 18%{opacity:1; box-shadow:0 0 30px rgba(255,214,92,0.5) inset;} 96%{opacity:1;} 100%{opacity:0;} }
+#scene4 .shot-piece{left:79%; top:44%; opacity:0;}
+#scene4.active .shot-piece{ animation:s4piece 10s ease forwards; }
+@keyframes s4piece{ 0%,16%{opacity:0; transform:scale(0.5);} 22%{opacity:1; transform:scale(1.2);} 28%{transform:scale(1);} 94%{opacity:1;} 100%{opacity:0;} }
+#scene4 .shot-ball{left:79%; top:44%; opacity:0;}
+#scene4.active .shot-ball{ animation:s4ball 10s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes s4ball{ 0%,32%{left:79%; opacity:0;} 36%{opacity:1;} 52%{left:97%; opacity:1; transform:scale(0.6);} 58%{opacity:0;} 100%{opacity:0;} }
+#scene4 .flash{position:absolute; right:-4%; top:15%; bottom:15%; width:8%; background:radial-gradient(circle, rgba(255,255,255,0.9), transparent 70%); opacity:0;}
+#scene4.active .flash{ animation:s4flash 10s ease forwards; }
+@keyframes s4flash{ 0%,50%{opacity:0;} 54%{opacity:1;} 62%{opacity:0;} 100%{opacity:0;} }
+#scene4 .goaltext{
+  position:absolute; left:50%; top:38%; transform:translate(-50%,-50%) scale(0.3);
+  font-family:'Anton',sans-serif; font-size:clamp(40px,9vw,110px); color:var(--yellow);
+  text-shadow:0 0 30px rgba(255,214,92,0.7); opacity:0; letter-spacing:3px;
+}
+#scene4.active .goaltext{ animation:s4goaltext 10s cubic-bezier(.2,1.6,.4,1) forwards; }
+@keyframes s4goaltext{ 0%,52%{opacity:0; transform:translate(-50%,-50%) scale(0.3);} 58%{opacity:1; transform:translate(-50%,-50%) scale(1.15);} 64%{transform:translate(-50%,-50%) scale(1);} 92%{opacity:1;} 100%{opacity:0;} }
+#scene4.active .cap.c1{animation:cw4a 10s ease forwards;}
+#scene4.active .cap.c2{animation:cw4b 10s ease forwards;}
+@keyframes cw4a{ 0%,4%{opacity:0;transform:translateY(14px);} 10%{opacity:1;transform:translateY(0);} 28%{opacity:1;} 34%{opacity:0;} 100%{opacity:0;} }
+@keyframes cw4b{ 0%,34%{opacity:0;transform:translateY(14px);} 40%{opacity:1;transform:translateY(0);} 54%{opacity:1;} 60%{opacity:0;} 100%{opacity:0;} }
+
+/* ===== SCENE 5: CARDS ===== */
+#scene5 .card-stage{position:relative; width:34vmin; height:44vmin;}
+.gcard{
+  position:absolute; inset:0; border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+  opacity:0; transform:rotateY(90deg) scale(0.85); box-shadow:0 20px 50px rgba(0,0,0,0.5);
+  border:3px solid rgba(255,255,255,0.25);
+}
+.gcard .icon{width:9vmin; height:9vmin;}
+.gcard .cname{font-family:'Anton',sans-serif; font-size:clamp(20px,3.4vw,34px); letter-spacing:2px; color:rgba(10,24,16,0.85);}
+.gcard.yellow{background:linear-gradient(160deg,var(--yellow),#c99414);}
+.gcard.green{background:linear-gradient(160deg,var(--green),#227a41);}
+.gcard.purple{background:linear-gradient(160deg,var(--purple),#5c3a8f); }
+.gcard.purple .cname{color:var(--chalk);}
+.gcard.red{background:linear-gradient(160deg,var(--red),#8f2620);}
+.gcard.red .cname{color:var(--chalk);}
+.gcard.gold{background:linear-gradient(160deg,var(--gold),#8a6a22);}
+#scene5.active .gcard{animation-duration:18s; animation-timing-function:ease; animation-fill-mode:forwards;}
+@keyframes flip1{ 0%,0%{opacity:0;transform:rotateY(90deg) scale(0.85);} 3%{opacity:1;transform:rotateY(0) scale(1.05);} 8%{transform:rotateY(0) scale(1);} 17%{opacity:1;} 19.5%{opacity:0; transform:rotateY(-90deg) scale(0.85);} 100%{opacity:0;} }
+@keyframes flip2{ 0%,20%{opacity:0;transform:rotateY(90deg) scale(0.85);} 23%{opacity:1;transform:rotateY(0) scale(1.05);} 28%{transform:rotateY(0) scale(1);} 37%{opacity:1;} 39.5%{opacity:0; transform:rotateY(-90deg) scale(0.85);} 100%{opacity:0;} }
+@keyframes flip3{ 0%,40%{opacity:0;transform:rotateY(90deg) scale(0.85);} 43%{opacity:1;transform:rotateY(0) scale(1.05);} 48%{transform:rotateY(0) scale(1);} 57%{opacity:1;} 59.5%{opacity:0; transform:rotateY(-90deg) scale(0.85);} 100%{opacity:0;} }
+@keyframes flip4{ 0%,60%{opacity:0;transform:rotateY(90deg) scale(0.85);} 63%{opacity:1;transform:rotateY(0) scale(1.05);} 68%{transform:rotateY(0) scale(1);} 77%{opacity:1;} 79.5%{opacity:0; transform:rotateY(-90deg) scale(0.85);} 100%{opacity:0;} }
+@keyframes flip5{ 0%,80%{opacity:0;transform:rotateY(90deg) scale(0.85);} 83%{opacity:1;transform:rotateY(0) scale(1.05);} 88%{transform:rotateY(0) scale(1);} 97%{opacity:1;} 99.5%{opacity:0; transform:rotateY(-90deg) scale(0.85);} 100%{opacity:0;} }
+#scene5.active .g1{animation-name:flip1;} #scene5.active .g2{animation-name:flip2;} #scene5.active .g3{animation-name:flip3;} #scene5.active .g4{animation-name:flip4;} #scene5.active .g5{animation-name:flip5;}
+#scene5 .headline{
+  position:absolute; top:11vh; left:0; right:0; text-align:center;
+  font-family:'Anton',sans-serif; color:var(--chalk); font-size:clamp(18px,3vw,32px); letter-spacing:3px;
+  opacity:0;
+}
+#scene5.active .headline{ animation:s5head 18s ease forwards; }
+@keyframes s5head{ 0%,2%{opacity:0;} 6%{opacity:1;} 92%{opacity:1;} 97%{opacity:0;} 100%{opacity:0;} }
+#scene5 .cap{position:static; background:none; transform:none; opacity:1; padding:0; margin-top:6px; font-size:clamp(15px,2.4vw,24px);}
+#scene5 .cap-row{bottom:8vh;}
+
+/* ===== SCENE 6: STAKES ===== */
+#scene6 .deckwrap{display:flex; gap:8px; margin-bottom:5vh;}
+#scene6 .tick{width:2.2vmin; height:5vmin; background:var(--chalk); border-radius:3px; opacity:1; transition:none;}
+#scene6.active .tick{animation:tickOff 10s steps(1) forwards;}
+#scene6.active .tick:nth-child(1){animation-delay:.5s;} #scene6.active .tick:nth-child(2){animation-delay:1s;} #scene6.active .tick:nth-child(3){animation-delay:1.5s;}
+#scene6.active .tick:nth-child(4){animation-delay:2s;} #scene6.active .tick:nth-child(5){animation-delay:2.5s;} #scene6.active .tick:nth-child(6){animation-delay:3s;}
+#scene6.active .tick:nth-child(7){animation-delay:3.5s;} #scene6.active .tick:nth-child(8){animation-delay:4s;} #scene6.active .tick:nth-child(9){animation-delay:4.5s;}
+#scene6.active .tick:nth-child(10){animation-delay:5s;}
+@keyframes tickOff{ 0%{background:var(--yellow);} 1%{background:rgba(255,255,255,0.12);} 100%{background:rgba(255,255,255,0.12);} }
+#scene6 .score-final{display:flex; align-items:center; gap:5vmin; opacity:0;}
+#scene6.active .score-final{ animation:s6score 10s ease forwards; }
+@keyframes s6score{ 0%,52%{opacity:0; transform:scale(0.7);} 60%{opacity:1; transform:scale(1.08);} 66%{transform:scale(1);} 94%{opacity:1;} 100%{opacity:0;} }
+#scene6 .score-final .num{font-family:'Anton',sans-serif; font-size:clamp(60px,12vw,150px); color:var(--chalk);}
+#scene6 .score-final .num.win{color:var(--yellow); text-shadow:0 0 30px rgba(255,214,92,0.5);}
+#scene6 .score-final .vs{font-family:'Space Mono',monospace; color:var(--net); font-size:clamp(16px,2vw,22px);}
+#scene6.active .cap.c1{animation:cw6a 10s ease forwards;}
+#scene6.active .cap.c2{animation:cw6b 10s ease forwards;}
+@keyframes cw6a{ 0%,2%{opacity:0;transform:translateY(14px);} 8%{opacity:1;transform:translateY(0);} 30%{opacity:1;} 36%{opacity:0;} 100%{opacity:0;} }
+@keyframes cw6b{ 0%,58%{opacity:0;transform:translateY(14px);} 66%{opacity:1;transform:translateY(0);} 96%{opacity:1;} 100%{opacity:1;} }
+
+/* ===== SCENE 7: TIE-BREAKER ===== */
+#scene7 .spot{
+  position:relative; width:50vmin; height:30vmin;
+  background:radial-gradient(circle at 30% 50%, rgba(255,255,255,0.08), transparent 55%);
+  display:flex; align-items:center; justify-content:space-between;
+  opacity:0;
+}
+#scene7.active .spot{ animation:s7in 8s ease forwards; }
+@keyframes s7in{ 0%{opacity:0;} 10%{opacity:1;} 92%{opacity:1;} 100%{opacity:0;} }
+#scene7 .pen-ball{width:6vmin; height:6vmin; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff, #cfcfcf 55%, #8f8f8f); position:relative; left:2vmin;}
+#scene7.active .pen-ball{ animation:s7kick 8s cubic-bezier(.3,.7,.3,1) forwards; }
+@keyframes s7kick{ 0%,55%{transform:translateX(0);} 72%{transform:translateX(34vmin) scale(0.7);} 100%{transform:translateX(34vmin) scale(0.7);} }
+#scene7 .pen-goal{width:3vmin; height:100%; background:repeating-linear-gradient(45deg, rgba(201,212,204,0.55) 0 2px, transparent 2px 6px); border:2px solid var(--net);}
+#scene7.active .cap.c1{animation:cw7a 8s ease forwards;}
+#scene7.active .cap.c2{animation:cw7b 8s ease forwards;}
+@keyframes cw7a{ 0%,6%{opacity:0;transform:translateY(14px);} 14%{opacity:1;transform:translateY(0);} 42%{opacity:1;} 48%{opacity:0;} 100%{opacity:0;} }
+@keyframes cw7b{ 0%,50%{opacity:0;transform:translateY(14px);} 58%{opacity:1;transform:translateY(0);} 96%{opacity:1;} 100%{opacity:0;} }
+
+/* ===== SCENE 8: CTA ===== */
+#scene8 .pitch-frame{opacity:0; transform:scale(1.25);}
+#scene8.active .pitch-frame{ animation:s8pull 12s ease forwards; }
+@keyframes s8pull{ 0%{opacity:0; transform:scale(1.25);} 10%{opacity:0.55; transform:scale(1.25);} 26%{opacity:0.3; transform:scale(0.9);} 60%{opacity:0.18;} 100%{opacity:0.12; transform:scale(0.85);} }
+#scene8 .final-logo{
+  position:absolute; top:38%; left:50%; transform:translate(-50%,-50%) scale(0.5);
+  font-family:'Anton',sans-serif; font-size:clamp(46px,10vw,130px); color:var(--chalk); letter-spacing:4px;
+  opacity:0; text-shadow:0 0 50px rgba(255,214,92,0.4);
+}
+#scene8.active .final-logo{ animation:s8logo 12s cubic-bezier(.2,1.5,.4,1) forwards; }
+@keyframes s8logo{ 0%,16%{opacity:0; transform:translate(-50%,-50%) scale(0.5);} 27%{opacity:1; transform:translate(-50%,-50%) scale(1.08);} 33%{transform:translate(-50%,-50%) scale(1);} 100%{opacity:1;} }
+#scene8 .final-logo span{color:var(--yellow);}
+#scene8 .cap.c1{position:absolute; top:57%; left:50%; transform:translate(-50%,0); white-space:nowrap;}
+#scene8.active .cap.c1{ animation:cw8a 12s ease forwards; }
+@keyframes cw8a{ 0%,25%{opacity:0;transform:translate(-50%,14px);} 33%{opacity:1;transform:translate(-50%,0);} 55%{opacity:1;} 62%{opacity:0;} 100%{opacity:0;} }
+#scene8 .cap.c2{position:absolute; top:64%; left:50%; transform:translate(-50%,0); white-space:nowrap; color:var(--gold); font-size:clamp(14px,2vw,22px);}
+#scene8.active .cap.c2{ animation:cw8b 12s ease forwards; }
+@keyframes cw8b{ 0%,60%{opacity:0;transform:translate(-50%,14px);} 68%{opacity:1;transform:translate(-50%,0);} 94%{opacity:1;} 100%{opacity:1;} }
+
+/* Replay */
+#replayBtn{
+  position:absolute; bottom:9.5vh; left:50%; transform:translateX(-50%);
+  background:var(--yellow); color:var(--pitch-black); font-family:'Barlow Condensed',sans-serif; font-weight:700;
+  border:none; padding:12px 30px; font-size:16px; letter-spacing:2px; text-transform:uppercase; border-radius:3px;
+  cursor:pointer; z-index:60; opacity:0; pointer-events:none; transition:opacity .6s ease;
+}
+#replayBtn.show{opacity:1; pointer-events:auto;}
+#replayBtn:hover{background:var(--glow);}
+
+/* Start screen */
+#startScreen{
+  position:absolute; inset:0; z-index:100; background:var(--pitch-black);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
+  transition:opacity .6s ease;
+}
+#startScreen h1{font-family:'Anton',sans-serif; color:var(--chalk); font-size:clamp(40px,9vw,110px); letter-spacing:4px;}
+#startScreen h1 span{color:var(--yellow);}
+#startScreen p{font-family:'Barlow Condensed',sans-serif; color:var(--net); letter-spacing:3px; text-transform:uppercase; font-size:clamp(12px,1.6vw,16px);}
+#playBtn{
+  margin-top:10px; background:var(--yellow); color:var(--pitch-black); border:none; padding:16px 42px;
+  font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:18px; letter-spacing:3px; text-transform:uppercase;
+  border-radius:4px; cursor:pointer; box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+#playBtn:hover{background:var(--glow);}
+#startScreen.hide{opacity:0; pointer-events:none;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="letterbox top"></div>
+  <div class="letterbox bottom"></div>
+  <div id="scoreboard">SCENE <span id="sceneNum">1</span>/8 <span class="dot">·</span> <span id="clock">00:00</span></div>
+  <div id="progressWrap"><div id="progressFill"></div></div>
+
+  <!-- SCENE 1 -->
+  <div class="scene" id="scene1">
+    <div class="grid-wash"></div>
+    <div class="logo-wrap">
+      <div class="kicklogo">KICK<span>SHOT</span></div>
+      <div class="tagline">Dice. Cards. Glory.</div>
+    </div>
+  </div>
+
+  <!-- SCENE 2 -->
+  <div class="scene" id="scene2">
+    <div class="pitch-frame">
+      <div class="pitch" id="pitch2"></div>
+      <div class="goal left"></div>
+      <div class="goal right"></div>
+      <div class="piece squadA"></div>
+      <div class="piece squadA p2"></div>
+      <div class="piece squadB"></div>
+      <div class="piece squadB p2"></div>
+      <div class="ball"></div>
+    </div>
+    <div class="cap-row">
+      <div class="cap c1" data-c="1">2 Squads. 1 Pitch.</div>
+      <div class="cap c2 sub" data-c="2">Winner takes all.</div>
+      <div class="cap c3 sub" data-c="3">Pick your Attacker. Hold your Defender.</div>
+    </div>
+  </div>
+
+  <!-- SCENE 3 -->
+  <div class="scene" id="scene3">
+    <div class="die die-roll">
+      <div class="die-face">
+        <div class="pip p-tl"></div><div></div><div class="pip p-tr"></div>
+        <div></div><div></div><div></div>
+        <div class="pip p-bl"></div><div></div><div class="pip p-br"></div>
+      </div>
+    </div>
+    <div class="pitch-frame">
+      <div class="pitch" id="pitch3"></div>
+      <div class="trail"></div>
+      <div class="piece move-piece"></div>
+    </div>
+    <div class="cap-row">
+      <div class="cap c1">Roll the dice—</div>
+      <div class="cap c2 sub">Make your move.</div>
+    </div>
+  </div>
+
+  <!-- SCENE 4 -->
+  <div class="scene" id="scene4">
+    <div class="pitch-frame">
+      <div class="pitch" id="pitch4"></div>
+      <div class="goal left"></div>
+      <div class="goal right"></div>
+      <div class="zone-highlight"></div>
+      <div class="piece shot-piece"></div>
+      <div class="ball shot-ball"></div>
+      <div class="flash"></div>
+    </div>
+    <div class="goaltext">GOAL!</div>
+    <div class="cap-row">
+      <div class="cap c1">Hit the zone.</div>
+      <div class="cap c2 sub">Take the shot.</div>
+    </div>
+  </div>
+
+  <!-- SCENE 5 -->
+  <div class="scene" id="scene5">
+    <div class="headline">5 CARDS. ENDLESS STRATEGY.</div>
+    <div class="card-stage">
+      <div class="gcard yellow g1">
+        <svg class="icon" viewBox="0 0 24 24" fill="none"><rect x="4" y="8" width="4" height="8" rx="1" fill="#0A1810"/><rect x="16" y="8" width="4" height="8" rx="1" fill="#0A1810"/></svg>
+        <div class="cname">YELLOW</div>
+      </div>
+      <div class="gcard green g2">
+        <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M3 12h14M13 6l6 6-6 6" stroke="#0A1810" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="cname">GREEN</div>
+      </div>
+      <div class="gcard purple g3">
+        <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 8h11M11 4l4 4-4 4" stroke="#F3EFE4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16H9M13 12l-4 4 4 4" stroke="#F3EFE4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="cname">PURPLE</div>
+      </div>
+      <div class="gcard red g4">
+        <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 2v6M12 16v6M2 12h6M16 12h6M5 5l4 4M15 15l4 4M19 5l-4 4M9 15l-4 4" stroke="#F3EFE4" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="cname">RED</div>
+      </div>
+      <div class="gcard gold g5">
+        <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 3v6c0 5-3.4 8.4-8 11-4.6-2.6-8-6-8-11V5l8-3z" stroke="#0A1810" stroke-width="2" fill="none"/></svg>
+        <div class="cname">GOLD</div>
+      </div>
+    </div>
+    <div class="cap-row">
+      <div class="cap" id="cardCap"></div>
+    </div>
+  </div>
+
+  <!-- SCENE 6 -->
+  <div class="scene" id="scene6">
+    <div class="deckwrap" id="deckwrap"></div>
+    <div class="score-final">
+      <div class="num win">7</div>
+      <div class="vs">FT</div>
+      <div class="num">5</div>
+    </div>
+    <div class="cap-row">
+      <div class="cap c1">10 cards each.</div>
+      <div class="cap c2 sub">Most goals wins.</div>
+    </div>
+  </div>
+
+  <!-- SCENE 7 -->
+  <div class="scene" id="scene7">
+    <div class="spot">
+      <div class="pen-ball"></div>
+      <div class="pen-goal"></div>
+    </div>
+    <div class="cap-row">
+      <div class="cap c1">Still tied?</div>
+      <div class="cap c2 sub">Sudden-death penalties.</div>
+    </div>
+  </div>
+
+  <!-- SCENE 8 -->
+  <div class="scene" id="scene8">
+    <div class="pitch-frame">
+      <div class="pitch" id="pitch8"></div>
+    </div>
+    <div class="final-logo">KICK<span>SHOT</span></div>
+    <div class="cap c1">Gather your squad.</div>
+    <div class="cap c2">Kickshot — coming to your table.</div>
+    <button id="replayBtn">Replay Trailer</button>
+  </div>
+
+  <div id="startScreen">
+    <h1>KICK<span>SHOT</span></h1>
+    <p>A 10×5 pitch. Dice. Cards. Glory.</p>
+    <button id="playBtn">▶ Play Trailer</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const scenes = [
+    {id:'scene1', dur:8000},
+    {id:'scene2', dur:9000},
+    {id:'scene3', dur:9000},
+    {id:'scene4', dur:10000},
+    {id:'scene5', dur:18000},
+    {id:'scene6', dur:10000},
+    {id:'scene7', dur:8000},
+    {id:'scene8', dur:12000},
+  ];
+  const total = scenes.reduce((a,s)=>a+s.dur,0);
+  const cumStart = [];
+  let c=0;
+  scenes.forEach(s=>{cumStart.push(c); c+=s.dur;});
+
+  function buildGrid(container){
+    if(!container) return;
+    container.innerHTML='';
+    for(let i=0;i<50;i++){
+      const d=document.createElement('div');
+      d.className='cell';
+      container.appendChild(d);
+    }
+  }
+  ['pitch2','pitch3','pitch4','pitch8'].forEach(id=>buildGrid(document.getElementById(id)));
+
+  // deck ticks for scene 6
+  const deckwrap = document.getElementById('deckwrap');
+  for(let i=0;i<10;i++){
+    const t=document.createElement('div');
+    t.className='tick';
+    deckwrap.appendChild(t);
+  }
+
+  // card captions synced to scene5 slots
+  const cardCaptions = [
+    'Yellow — Sideline them.',
+    'Green — Pass. Shoot. Score.',
+    'Purple — Swap. Steal. Strike.',
+    'Red — Full team frozen.',
+    'Gold — Guard your goal.'
+  ];
+  const cardCapEl = document.getElementById('cardCap');
+  let cardCapTimers = [];
+  function scheduleCardCaptions(){
+    cardCapTimers.forEach(t=>clearTimeout(t));
+    cardCapTimers=[];
+    cardCaptions.forEach((txt,i)=>{
+      const showAt = i*3600 + 400;
+      const hideAt = i*3600 + 3300;
+      cardCapTimers.push(setTimeout(()=>{ cardCapEl.textContent = txt; cardCapEl.style.opacity=1; }, showAt));
+      cardCapTimers.push(setTimeout(()=>{ cardCapEl.style.opacity=0; }, hideAt));
+    });
+  }
+
+  const sceneNumEl = document.getElementById('sceneNum');
+  const clockEl = document.getElementById('clock');
+  const progressFill = document.getElementById('progressFill');
+  const scoreboard = document.getElementById('scoreboard');
+  const replayBtn = document.getElementById('replayBtn');
+  let currentIndex = -1;
+  let rafId, startTime;
+
+  function fmt(ms){
+    const s = Math.floor(ms/1000);
+    const m = Math.floor(s/60);
+    const sec = s%60;
+    return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+  }
+
+  function setScene(idx){
+    if(idx===currentIndex) return;
+    scenes.forEach((s,i)=>{
+      document.getElementById(s.id).classList.toggle('active', i===idx);
+    });
+    currentIndex = idx;
+    sceneNumEl.textContent = idx+1;
+    if(scenes[idx].id==='scene5') scheduleCardCaptions();
+  }
+
+  function tick(ts){
+    if(!startTime) startTime = ts;
+    const elapsed = ts - startTime;
+    if(elapsed >= total){
+      clockEl.textContent = fmt(total);
+      progressFill.style.width = '100%';
+      replayBtn.classList.add('show');
+      return;
+    }
+    let idx = 0;
+    for(let i=0;i<scenes.length;i++){
+      if(elapsed >= cumStart[i]) idx = i;
+    }
+    setScene(idx);
+    clockEl.textContent = fmt(elapsed);
+    progressFill.style.width = (elapsed/total*100)+'%';
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function playTrailer(){
+    document.getElementById('startScreen').classList.add('hide');
+    scoreboard.classList.add('show');
+    startTime = null;
+    setScene(0);
+    rafId = requestAnimationFrame(tick);
+
+    // tiny whistle + cheer via WebAudio, best-effort
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const whistle = ()=>{
+        const o = ctx.createOscillator(); const g = ctx.createGain();
+        o.type='square'; o.frequency.setValueAtTime(1800, ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(2600, ctx.currentTime+0.15);
+        g.gain.setValueAtTime(0.06, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.4);
+        o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime+0.4);
+      };
+      const cheer = ()=>{
+        const bufferSize = ctx.sampleRate*0.6;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for(let i=0;i<bufferSize;i++){ data[i] = (Math.random()*2-1)*Math.pow(1-i/bufferSize,1.5); }
+        const src = ctx.createBufferSource(); src.buffer = buffer;
+        const g = ctx.createGain(); g.gain.setValueAtTime(0.09, ctx.currentTime);
+        src.connect(g); g.connect(ctx.destination); src.start();
+      };
+      whistle();
+      setTimeout(cheer, cumStart[3] + 5400); // during scene4 goal moment
+    }catch(e){ /* audio not available, visuals still play */ }
+  }
+
+  document.getElementById('playBtn').addEventListener('click', playTrailer);
+  replayBtn.addEventListener('click', ()=>{ location.reload(); });
+})();
+</script>
+</body>
+</html>
