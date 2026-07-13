@@ -111,12 +111,7 @@
     border-bottom:none;
     overflow:hidden;
   }
-  .hero-banner{
-    height:60vh;
-    min-height:380px;
-    margin:32px;
-    border-radius:18px;
-  }
+
   .hero-content{
     max-width:960px;
     margin:0 auto;
@@ -543,27 +538,27 @@
   display: block;
   border-radius: 8px;
 }
+.hero {
+  padding: 0;
+  border-bottom: none;
+  line-height: 0;   /* kills the tiny gap browsers add under inline images */
+}
 
+.hero-banner {
+  width: 100%;
+  height: auto;
+  display: block;
+}
 </style>
 </head>
 <body>
 
   <!-- ============ HERO ============ -->
-  <header class="hero">
-    <div class="pitch-lines"></div>
-    <div class="placeholder hero-banner" style="margin-top:32px;">
-      <div>
-        <span class="tag">KICK-OFF</span><br>
-        [BANNER IMAGE — full photo of your game board, laid out and ready to play]
-      </div>
-    </div>
-    <div class="hero-content">
-      <div class="clock">KICK-OFF · 0'</div>
-      <h1 class="game-title">Kick Rush</h1>
-      <p class="core-statement">The World Cup Experience on Your Table.
-</p>
-    </div>
-  </header>
+<header class="hero">
+    <header class="hero">
+  <img src="banner.png" alt="Kick Shot game board fully set up and ready to play" class="hero-banner">
+</header>
+</header>
   
   <!-- ============ TRAILER ============ -->
 <section id="trailer">
@@ -581,7 +576,7 @@
   <section id="inspiration">
     <div class="clock">12' · BUILDING PLAY</div>
     <h2 class="section-title">Where It Comes From</h2>
-    <p class="body-copy">Our World Cup board game was inspired by several popular games. We borrowed the dice-based movement from Monopoly, where the number rolled determines how far a player can move. The action card system was inspired by games like UNO and Mario Party, where special cards or events can change the course of the game and add unpredictability. We also took inspiration from the teamwork and passing mechanics found in the video game EA Sports FC 25 (formerly FIFA), incorporating realistic soccer rules such as yellow cards, red cards, free kicks, injuries, and shooting opportunities. By combining these mechanics with our own board game design, we created a game that captures the excitement and strategy of a World Cup soccer match while remaining fun and accessible for players of all ages.
+    <p class="body-copy">Our Kick Shot board game is inspired by several popular games. We borrowed the dice-based movement from Monopoly, where the number rolled determines how far a player can move. The action card system was inspired by games like UNO and Mario Party, where special cards or events can change the course of the game and add unpredictability. We also took inspiration from the teamwork and passing mechanics found in the video game EA Sports FC 25 (formerly FIFA), incorporating realistic soccer rules such as yellow cards, red cards, free kicks, injuries, and shooting opportunities. By combining these mechanics with our own board game design, we created a game that captures the excitement and strategy of a World Cup soccer match while remaining fun and accessible for players of all ages.
 </p>
   </section>
 
@@ -616,7 +611,7 @@
 
 Every 100 years, the KickShot Cup is held to decide who will protect the legendary Golden Ball, a powerful artifact said to bring peace and prosperity to the kingdom. Teams from across the world travel to the Grand Arena, each hoping to earn the honor of becoming its guardian.
 
-On the day of the final match, a mysterious challenger appears and claims the Golden Ball belongs to them. Instead of starting a war, the leaders agree that the fate of the artifact will be decided the traditional way—through one final KickShot match.
+On the day of the final match, a mysterious challenger appears and claims the Golden Ball belongs to them. Instead of starting a war, the leaders agree that the fate of the artifact will be decided the traditional way through one final KickShot match.
 
 Now the two teams step onto the field with the future of the kingdom in their hands. Only one team will lift the KickShot Cup, claim the Golden Ball, and become the kingdom's next champions.
 </p>
@@ -632,6 +627,10 @@ Now the two teams step onto the field with the future of the kingdom in their ha
   <h2 class="section-title">Component Gallery</h2>
   <p class="body-copy">Everything in the box besides the board itself — cards, dice, player pieces, tokens.</p>
   <div class="gallery">
+     <figure class="gallery-item">
+    <div class="placeholder"><img src="2nets.png" alt="Card front"></div>
+    <figcaption class="gallery-caption">2 Nets Setup</figcaption>
+  </figure>
   <figure class="gallery-item">
     <div class="placeholder"><img src="4corner.png" alt="Card front"></div>
     <figcaption class="gallery-caption">4 Corner Setup</figcaption>
@@ -661,8 +660,20 @@ Now the two teams step onto the field with the future of the kingdom in their ha
     <figcaption class="gallery-caption"> Red Card</figcaption>
   </figure>
     <figure class="gallery-item">
-    <div class="placeholder"><img src="die.png" alt="Tokens / markers"></div>
+    <div class="placeholder"><img src="dice.png" alt="Tokens / markers"></div>
     <figcaption class="gallery-caption"> Dice</figcaption>
+  </figure>
+   <figure class="gallery-item">
+    <div class="placeholder"><img src="nets.png" alt="Tokens / markers"></div>
+    <figcaption class="gallery-caption"> Nets</figcaption>
+  </figure>
+   <figure class="gallery-item">
+    <div class="placeholder"><img src="player-figures.png" alt="Tokens / markers"></div>
+    <figcaption class="gallery-caption"> Player Figures</figcaption>
+  </figure>
+   <figure class="gallery-item">
+    <div class="placeholder"><img src="soccer ball.png" alt="Tokens / markers"></div>
+    <figcaption class="gallery-caption"> Soccer Ball</figcaption>
   </figure>
 </div>
 </section>
@@ -675,11 +686,13 @@ Now the two teams step onto the field with the future of the kingdom in their ha
     <span class="rb-callout">BOARD · 10 × 5 GRID</span>
  
     <h3 class="rb-subhead">The Cards</h3>
+    <p class="body-copy">Every color has two possible outcomes (except Red & Gold), but each individual card shows only one.</p>
+    
     <div class="card-legend">
       <div class="card-chip chip-yellow">
-        <span class="chip-label">Yellow Card — Play Immediately</span>
+        <span class="chip-label">Yellow Card</span>
         <ul>
-          <li>Drawer sits out for one turn.</li>
+          <li>Drawer sits out next turn.</li>
           <li>Prevents one opponent from using any card on their next turn.</li>
         </ul>
       </div>
@@ -687,7 +700,7 @@ Now the two teams step onto the field with the future of the kingdom in their ha
         <span class="chip-label">Green Card</span>
         <ul>
           <li>Shoot the ball at the net.</li>
-          <li>Pass the ball to a teammate — if they're in the Shooting Zone, they may shoot it.</li>
+          <li>Pass the ball to a teammate => if they're in the Shooting Zone, they may shoot it.</li>
         </ul>
       </div>
       <div class="card-chip chip-purple">
@@ -703,7 +716,7 @@ Now the two teams step onto the field with the future of the kingdom in their ha
       </div>
       <div class="card-chip chip-gold">
         <span class="chip-label">Gold Card</span>
-        <p>You have the chance to defend your net when the opponent shoots.</p>
+        <p>You are a goalie for the next opponent shot.</p>
       </div>
     </div>
  
@@ -745,11 +758,10 @@ Now the two teams step onto the field with the future of the kingdom in their ha
         </ul>
         <h4>Starting Setup</h4>
         <ul>
-          <li>Place all player pieces in their starting positions.</li>
-          <li>Shuffle each team's 10 cards.</li>
-          <li>Place the cards face down in each team's card area.</li>
-          <li>Place the soccer ball according to the starting position.</li>
-          <li>Determine the starting team using a coin toss.</li>
+          <li>Place all player pieces infront of their nets in a row.</li>
+          <li>Shuffle Cards and handout 10 cards to each team.</li>
+          <li>Place the soccer ball  at the center of the grid.</li>
+        
         </ul>
       </div>
  
@@ -769,6 +781,7 @@ Now the two teams step onto the field with the future of the kingdom in their ha
         <ul>
           <li>One player from the active team becomes the <strong>Attacker</strong>.</li>
           <li>The other teammate remains on the board as a <strong>Defender / Support Player</strong> and may help with future plays.</li>
+           <li>On their following turn the Defender <strong>becomes</strong> the Attacker and the Attacker becomes the Defender and vice versa</li>
         </ul>
         <h4>Step 2 — Roll and Move</h4>
         <ul>
@@ -779,10 +792,10 @@ Now the two teams step onto the field with the future of the kingdom in their ha
  
       <div class="rb-section">
         <h3><span class="rb-num">6</span>Shooting Rules</h3>
-        <p>After moving, check the player's location. If the player lands in a <strong>Shooting Zone</strong>:</p>
+        <p>After moving, check the player's location. If the player lands in a <strong>Shooting Zone (the colored part infront the net)</strong>:</p>
         <ul>
           <li>The player becomes the attacker; the opposing team's player acts as the defender.</li>
-          <li>The attacker may attempt a shot by flicking the mini soccer ball toward the goal.</li>
+          <li>The attacker will attempt a shot by flicking the mini soccer ball toward the goal.</li>
           <li>If the ball enters the goal, the attacking team earns <strong>1 point</strong>.</li>
           <li>If the shot misses, no points are awarded.</li>
         </ul>
@@ -816,7 +829,7 @@ Now the two teams step onto the field with the future of the kingdom in their ha
           <li>Remains on the board.</li>
           <li>Helps defend against opponents and prepares for future turns.</li>
         </ul>
-        <p>Players may switch roles between turns.</p>
+        <p>Players will switch roles between turns.</p>
       </div>
  
       <div class="rb-section">
@@ -869,23 +882,45 @@ Now the two teams step onto the field with the future of the kingdom in their ha
     <div class="doc-row">
       <div class="doc-text">
         <h3>Meeting Minutes &amp; Summaries</h3>
-        <p>[First page of each meeting's minutes, compiled into one PDF.]</p>
+      
       </div>
-      <a class="download-btn" href="#">[Link your Meeting Log PDF]</a>
+      <a class="download-btn" href="meetinglog.pdf" download="Meetign log.pdf">Download Meeting Log</a>
     </div>
   </section>
 
-  <!-- ============ PLAYTESTING LOG ============ -->
-  <section id="playtesting">
+<!-- ============ PLAYTESTING LOG ============ -->
+<section id="playtesting">
     <div class="clock">58' · ON THE PITCH</div>
     <h2 class="section-title">Playtesting Log</h2>
-    <div class="doc-row">
-      <div class="doc-text">
-        <h3>What We Learned</h3>
-        <p>[What you learned during playtesting and how you revised the game based on those insights.]</p>
+
+    <div class="rb-sections">
+
+      <div class="rb-section">
+        <h3><span class="rb-num">1</span>Dexterity & The "Shooting Zone"</h3>
+        <p><strong>Focus:</strong> Evaluating the flicking mechanic and scoring rates.</p>
+        <p><strong>Observation:</strong> Originally, players were allowed to attempt a flick shot from anywhere on the board. This resulted in messy gameplay where pieces can be knocked over by shots frequently, and very low scoring rates.</p>
+        <p><strong>Insight:</strong> The dexterity element (flicking) is fun but needs constraints to feel like a tactical soccer play.</p>
+        <p><strong>Revision Implemented:</strong> We introduced the Shooting Zone. Players can now only attempt a shot if their dice roll lands them within the shooting zone. This created a much better tactical environment where defenders now know exactly where they need to block, and attackers must carefully calculate their moves to land in the zone.</p>
       </div>
-      <a class="download-btn" href="#">[Link your Playtesting Log PDF]</a>
+
+      <div class="rb-section">
+        <h3><span class="rb-num">2</span>Player Engagement & Downtime</h3>
+        <p><strong>Focus:</strong> Testing the 4-team (free-for-all) mode and overall turn pacing.</p>
+        <p><strong>Observation:</strong> In a 4-team game, once a team finished their turn, they would mentally check out until their turn. Moreover, the second player on each team felt useless until they were chosen as the "Active Player."</p>
+        <p><strong>Insight:</strong> We needed to improve engagement.</p>
+        <p><strong>Revision Implemented:</strong> We reformatted the role of the teammate into a <strong>Defender/Support Role</strong> — while they don't roll the die, they remain on the board as a physical obstacle to block opponents' movement and shooting lanes. We also introduced <strong>Active Defense</strong>: when an attacker enters a Shooting Zone, the opposing team's player officially acts as the defender. This forces the defending team to stay highly engaged during the attacker's turn, as they must physically participate in the shot-blocking phase.</p>
+      </div>
+
+      <div class="rb-section">
+        <h3><span class="rb-num">3</span>Game Length & Pacing</h3>
+        <p><strong>Focus:</strong> Finding the right win conditions and preventing endless matches.</p>
+        <p><strong>Observation:</strong> We initially tested a "first to 5 goals wins" condition. In games where players shoot really badly, progress is really slow.</p>
+        <p><strong>Insight:</strong> The game lacked a definitive climax. We needed a timer or something that could escalate tension.</p>
+        <p><strong>Revision Implemented:</strong> We shifted the game structure to be dictated by the decks. End of Game was rewritten so that the game ends once every team has exhausted their 10 cards. This solved pacing issues by capping the game at exactly 10 rounds per team. To resolve the inevitable close games this created, we added the Sudden-Death Penalty Kicks (Section 11), which provided a highly climactic and exciting finale.</p>
+      </div>
+
     </div>
+
   </section>
 
   <!-- ============ FLOWCHARTS ============ -->
@@ -1022,38 +1057,54 @@ Now the two teams step onto the field with the future of the kingdom in their ha
 </div>
 
   <!-- ============ QUANT ANALYSIS ============ -->
-  <section id="balance">
+<section id="balance">
     <div class="clock">72' · THE STAT SHEET</div>
     <h2 class="section-title">Quantitative Analysis of Game Balance</h2>
-    <p class="body-copy">[Discuss probabilities and design factors used to balance the game — adjustments made during playtesting, average play length, average turn length, score ranges, card/dice probabilities, etc.]</p>
-    <div class="doc-row">
-      <div class="doc-text">
-        <h3>Balance Data &amp; Charts</h3>
-        <p>[Attach your full quantitative breakdown here, or link a PDF.]</p>
+ 
+    <div class="rb-sections">
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">1</span>Design Choices</h3>
+        <p>We chose to design and structure our game loosely around the actual rules of soccer to retain a certain familiarity and charm. We also took some liberties when adding the possible option for four teams to better adapt for a board game for group settings and differing player counts. The grid layout of the board was chosen to give a higher level of freedom of movement compared to other board games to better replicate soccer.</p>
       </div>
-      <a class="download-btn" href="#">[Link your Balance Analysis PDF]</a>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">2</span>Probabilities</h3>
+        <p>The first and foremost probability affected aspect of the game is the starting coin toss that decides which team begins. Other aspects that involve probability include shuffling of cards and the opportunities that are given from the random cards. The probability of cards is driven by how many of each card there is out of the stack of 10 cards.</p>
+        <p>Additionally, the dice roll that determines how many squares each player can move is essentially random. Skill of player — specifically as it pertains to flicking the ball to pass or attempt to score on net once the kick/pass card is pulled — can also be grouped in as a probability affected aspect of the game flow.</p>
+      </div>
+ 
+      <div class="rb-section">
+        <h3><span class="rb-num">3</span>Time Duration Analysis</h3>
+        <p>A full complete game that takes advantage of all features we found ideally takes from <strong>20–30 minutes</strong> for a full playthrough/experience, which differs from our minimum play time of <strong>15 minutes</strong> for two teams — but this time is also affected by number of players, not just teams. We found the total duration scales similarly for four teams.</p>
+        <p>An average turn takes about <strong>10 seconds</strong> between card pull, dice roll, movement, and action, depending on if the player received a card that lets them take an action at the end of their turn.</p>
+      </div>
+ 
     </div>
+ 
+  
   </section>
-
+ 
   <!-- ============ DYNAMICS ============ -->
   <section id="dynamics">
     <div class="clock">78' · READING THE GAME</div>
     <h2 class="section-title">Game Dynamics</h2>
-    <p class="body-copy">[Describe the successful strategies that emerged from play — how experienced players actually approach the game.]</p>
-  </section>
+    <p class="body-copy">A good strategy is to reserve good cards like the green shooting card until pieces are in a good position or in the late game to score a tiebreaker. Positioning defender pieces inside and around the shooting zone is an effective way to block or intercept shots. Players who actively move pieces into unguarded positions to attempt shots in the next round are highly effective.</p>
 
   <!-- ============ TRADE-OFFS ============ -->
   <section id="tradeoffs">
     <div class="clock">82' · TOUGH CALLS</div>
     <h2 class="section-title">Trade-offs &amp; Dilemmas</h2>
-    <p class="body-copy">[Describe the trade-offs and dilemmas that emerge in gameplay — the interesting decisions players are forced to make.]</p>
+    <p class="body-copy">The main dilemma players can encounter is whether to pass or kick the ball when given the chance with the respective card. There is an inherent trade off when a card is taken every turn as it could be a beneficial card or one that has a negative impact for the player. The skill aspect of flicking the ball into the net can also be seen as something beneficial or a tradeoff depending on how skilled the player is.
+</p>
   </section>
 
   <!-- ============ SESSION LENGTH ============ -->
   <section id="session-length">
     <div class="clock">86' · STOPPAGE TIME</div>
     <h2 class="section-title">Typical Play Session</h2>
-    <p class="body-copy">[Describe how long a typical play session lasts, start to finish.]</p>
+    <p class="body-copy">A typical playsession with two teams and 4 players takes from at a minimum 15 minutes to 30 minutes. With the expansion to four teams and 8 players it takes a minimum of 25 minutes to 45 minutes.
+</p>
   </section>
 
   <!-- ============ TEAM CONTRIBUTIONS ============ -->
@@ -1066,29 +1117,26 @@ Now the two teams step onto the field with the future of the kingdom in their ha
         <tr>
           <th>Team Member</th>
           <th>Deliverable(s)</th>
-          <th>Approx. %</th>
+         
         </tr>
       </thead>
       <tbody>
-        <tr><td>[Name]</td><td>[e.g. Rule book, card art]</td><td>[XX%]</td></tr>
-        <tr><td>[Name]</td><td>[e.g. Playtesting log, balance analysis]</td><td>[XX%]</td></tr>
-        <tr><td>[Name]</td><td>[e.g. Website, trailer video]</td><td>[XX%]</td></tr>
-        <tr><td>[Name]</td><td>[e.g. Flowcharts, meeting minutes]</td><td>[XX%]</td></tr>
+        <tr><td>Mariam</td><td>Rule Book, Flowchart, Trailer, Website, Thematic Backstory, & Game Inspiration from other games</td></tr>
+        <tr><td>Thomas</td><td>Game Dynamics, Playtesting Log, Meeting minutes Documentation</td></tr>
+        <tr><td>Florin</td><td>Game Analysis, Play Session Duration, & Dilemmas /Tradeoffs</td></tr>
+        <tr><td>Rojan</td><td>Banner Image & Gallery Images</td></tr>
       </tbody>
     </table>
     <div class="doc-row" style="margin-top:16px;">
       <div class="doc-text">
-        <h3>Full Contribution Record</h3>
-        <p>[Optional: link a detailed PDF breakdown if the table above isn't enough.]</p>
-      </div>
-      <a class="download-btn" href="#">[Link your Contributions PDF]</a>
-    </div>
+
+       
   </section>
 
   <!-- ============ FOOTER ============ -->
   <footer>
     <span class="whistle">FINAL WHISTLE</span>
-    <p>[Game Title] is an original concept created by our team for this course. All characters, storyworld, and mechanics are our own work.</p>
+    <p>Kick Shot Created By Mariam, Thomas, Florin, Rojan</p>
   </footer>
 
 </body>
